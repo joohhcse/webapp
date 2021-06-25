@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { HashRouter as Router, Route } from 'react-router-dom';
 import Home from './Home';
 import Table from './Table';
@@ -12,9 +12,9 @@ class App extends React.Component {
         return (
             <Router>
                 <div>
-                    {/* <Route exact path="/" component={Home}/> */}
                     <Route exact path="/" component={Table}/>
-                    <Route exact path="/nav" component={Nav}/>
+                    {/* <Route exact path="/" component={Home}/> */}
+                    {/* <Route exact path="/nav" component={Nav}/> */}
                 </div>
             </Router>
         );
