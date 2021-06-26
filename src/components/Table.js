@@ -73,44 +73,40 @@ var rId;
 var rContent;
 var rDate;
 
-docRef.get().then(function (querySnapshot) {
-  if (querySnapshot) {
-    querySnapshot.forEach(function (doc) {
-      let docs = doc.data();
-      console.log('문서의 id :' + doc.id);
+docRef.get().then(doc => {
+  doc.forEach(item => {  //item이 저장한 데이터 객체 원본입니다.
+    console.log(item.data());
+    //console.log(item.id);  //고유 키 값 입니다.
+    console.log(item.id); // doc id
 
-      for (let item in docs) {
-        console.log('key :' + item); //rnum, date, content
-        console.log('value :' + docs[item]); //
-        if(item == "rnum") {
-          rId = docs[item];
-          console.log('>' + rId);
-        }
-        else if(item == "content") {
-          rContent = docs[item];
-          console.log('>' + rContent);
-        }
+    let docs = item.data();
+
+    for (let item in docs) {
+      if(item == "rnum") {
+        rId = docs[item];
+        console.log(rId);
       }
-
-      console.log('push!');
-      console.log(rId + '/' + rContent);
-      rows.push(createData(doc.id, 'testDate', 'Name_'+rId, rContent));
-      
-    });
-  } else {
-    // doc.data() will be undefined in this case
-    console.log("No such document!");
-  }
-}).catch(function (error) {
-  console.log("Error getting document:", error);
+      else if(item == "content") {
+        rContent = docs[item];
+        console.log(rContent);
+      }
+    }
+    
+    rows.push(createData(item.id, 'testDate', 'Name_', 'Content'));
+  });
+})
+.catch(err => {
+  console.log('Error getting document', err);
 });
 
-
-
 //rId : undefined! 발생!
-// rows.push(createData(rId, 'testDate', 'Name_'+rId, rContent));
 // rows.push(createData('HfXEnt8Muq3u5JJn9eeA', 'testDate', 'Name_'+rId, rContent));
 // rows.push(createData('dWSs4IkBYTq9nysOwrqg', 'testDate2', 'Name_'+rId, rContent));
+
+// rows.push(createData(3, '16 Mar, 2019', 'Elvis Presley', 'Hello World!'));
+// rows.push(createData(2, '16 Mar, 2019', 'Paul McCartney', 'London, UK'));
+// rows.push(createData(1, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA'));
+// rows.push(createData(0, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN'));
 
 const iconStyle = {
   position: 'fixed',
