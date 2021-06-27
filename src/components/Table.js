@@ -179,7 +179,7 @@ export default function TheTable() {
         <AddCircleOutlineIcon fontSize="large" style={iconStyle} onClick={handleClickOpen} />
       </div>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">ADD A MEMO</DialogTitle>
+        <DialogTitle id="form-dialog-title">MEMO</DialogTitle>
         <DialogContent>
           <DialogContentText>
             메모를 남겨주세요.
