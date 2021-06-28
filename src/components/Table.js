@@ -15,7 +15,6 @@ import Tab from '@material-ui/core/Tab';
 import EcoIcon from "@material-ui/icons/Eco";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import firebase from './firebase';
-// const dbRef = firebase.database().ref();
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -23,49 +22,21 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { ContactSupportRounded } from '@material-ui/icons';
+import { ContactSupportRounded, TabletSharp } from '@material-ui/icons';
 
-console.log('Tablejs start!!')
-// console.log(firebase.data())
-const db = firebase.firestore();
+
 // db.collection('table').get().then((result)=> {
 //   result.forEach((doc)=>{
 //     console.log(doc.data());
 //   })
 // })
 
-var docRef = db.collection('table');
-
-// docRef.get().then(function (querySnapshot) {
-//   if (querySnapshot) {
-//     querySnapshot.forEach(function (doc) {
-//       let docs = doc.data();
-//       console.log('문서의 id :' + doc.id);
-//       for (let item in docs) {
-//         console.log('key :' + item); //rnum, date, content
-//         console.log('value :' + docs[item]); //
-//       }
-//     });
-//   } else {
-//     // doc.data() will be undefined in this case
-//     console.log("No such document!");
-//   }
-// }).catch(function (error) {
-//   console.log("Error getting document:", error);
-// });
+// var docRef = db.collection('table');
 
 // Generate Order Data
 function createData(id, date, name, content) {
   return { id, date, name, content};
 }
-
-// const rows = [
-//   createData(0, '16 Mar, 2019', 'Elvis Presley', 'Hello World!'),
-//   createData(1, '16 Mar, 2019', 'Paul McCartney', 'London, UK'),
-//   createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA'),
-//   createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN'),
-//   createData(4, '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ'),
-// ];
 
 var rows = [];
 
@@ -73,33 +44,6 @@ var rId;
 var rContent;
 var rDate;
 
-docRef.get().then(doc => {
-  doc.forEach(item => {  //item이 저장한 데이터 객체 원본입니다.
-    console.log(item.data());
-    //console.log(item.id);  //고유 키 값 입니다.
-    console.log(item.id); // doc id
-
-    let docs = item.data();
-
-    for (let item in docs) {
-      if(item == "rnum") {
-        rId = docs[item];
-        console.log(rId);
-      }
-      else if(item == "content") {
-        rContent = docs[item];
-        console.log(rContent);
-      }
-    }
-    
-    rows.push(createData(item.id, 'testDate', 'Name_', 'Content'));
-  });
-})
-.catch(err => {
-  console.log('Error getting document', err);
-});
-
-//rId : undefined! 발생!
 // rows.push(createData('HfXEnt8Muq3u5JJn9eeA', 'testDate', 'Name_'+rId, rContent));
 // rows.push(createData('dWSs4IkBYTq9nysOwrqg', 'testDate2', 'Name_'+rId, rContent));
 
@@ -141,6 +85,19 @@ export default function TheTable() {
   const handleClose = () => {
     setOpen(false);
   };
+ 
+  const [tables, setTables] = React.useState([]);
+  const [newTable, setNewTable] = React.useState();
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const db = firebase.firestore();
+      const data = await db.collection("table").get();
+      setTables(data.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+    };
+    fetchData();
+  }, []);
+
   
   return (
     <React.Fragment>
@@ -155,6 +112,16 @@ export default function TheTable() {
         <Tab label="NNSOFT" />
       </Tabs>
     </Paper>
+
+      <div className="col-md-6">
+        <ul className="list-group">
+          {tables.map((item, key) =>(
+            <li key={key}>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {/* <Title>The Table</Title> */}
       <Table size="small">
