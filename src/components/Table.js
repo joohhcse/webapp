@@ -86,18 +86,17 @@ export default function TheTable() {
     setOpen(false);
   };
  
-  const [tables, setTables] = React.useState([]);
-  const [newTable, setNewTable] = React.useState();
+  // const [tables, setTables] = React.useState([]);
+  // const [newTable, setNewTable] = React.useState();
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      const db = firebase.firestore();
-      const data = await db.collection("table").get();
-      setTables(data.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-    };
-    fetchData();
-  }, []);
-
+  // React.useEffect(() => {
+  //   const fetchData = async () => {
+  //     const db = firebase.firestore();
+  //     const data = await db.collection("table").get();
+  //     setTables(data.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+  //   };
+  //   fetchData();
+  // }, []);
   
   return (
     <React.Fragment>
@@ -113,7 +112,7 @@ export default function TheTable() {
       </Tabs>
     </Paper>
 
-      <div className="col-md-6">
+      {/* <div className="col-md-6">
         <ul className="list-group">
           {tables.map((item, key) =>(
             <li key={key}>
@@ -121,7 +120,7 @@ export default function TheTable() {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
 
       {/* <Title>The Table</Title> */}
       <Table size="small">
