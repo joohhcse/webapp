@@ -14,7 +14,9 @@ import Tab from '@material-ui/core/Tab';
 
 import EcoIcon from "@material-ui/icons/Eco";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import firebase from './firebase';
+import firebase from 'firebase';
+import db from './firebase';
+
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -71,12 +73,17 @@ const useStyles = makeStyles((theme) => ({
 export default function TheTable() {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
-  
+  const [open, setOpen] = React.useState(false);
+
+  const [tables, setTables] = React.useState([]);
+  const [input, setInput] = useState({
+    name: "",
+    content: ""
+  });
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
-  const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -85,9 +92,7 @@ export default function TheTable() {
   const handleClose = () => {
     setOpen(false);
   };
- 
-  // const [tables, setTables] = React.useState([]);
-  // const [newTable, setNewTable] = React.useState();
+
 
   // React.useEffect(() => {
   //   const fetchData = async () => {
@@ -97,6 +102,38 @@ export default function TheTable() {
   //   };
   //   fetchData();
   // }, []);
+
+  React.useEffect(() => {
+    db.collection('table').orderBy('datetime', 'desc').onSnapshot(snapshot => {
+      console.log('Firebase Snap!');
+      setTables(snapshot.docs.map(doc => {
+        return {
+          id: doc.id,
+          name: doc.data().name,
+          content: doc.data().content
+          // datetime: doc.data().date
+        }
+      }))
+    })
+
+  }, []);
+
+  const addTable = (event) => {
+    event.preventDefault();
+    db.collection('table').add({
+      name: input.name,
+      content: input.content,
+      datetime: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    setInput('');
+    setOpen(false);
+  }
+
+  const deleteTable = (id) => {
+    db.collection('table').doc(id).delete().then(res => {
+      console.log('Deleted!', res);
+    });
+  }
   
   return (
     <React.Fragment>
@@ -112,31 +149,23 @@ export default function TheTable() {
       </Tabs>
     </Paper>
 
-      {/* <div className="col-md-6">
-        <ul className="list-group">
-          {tables.map((item, key) =>(
-            <li key={key}>
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div> */}
-
       {/* <Title>The Table</Title> */}
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
             <TableCell>Name</TableCell>
             <TableCell>Content</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {tables.map((row) => (
             <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
               <TableCell>{row.name}</TableCell>
-              <TableCell>{row.content}</TableCell>
+              <TableCell>
+                {row.content}
+                {/* <Button color="primary">Edit</Button> */}
+                <Button color="secondary" onClick={() => { deleteTable(row.id) }}>Delete</Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -157,6 +186,8 @@ export default function TheTable() {
             label="Name"
             type="text"
             fullWidth
+            value={input.name}
+            onChange={event => setInput({...input, name:event.target.value})}
           />
           <TextField
             autoFocus
@@ -165,13 +196,15 @@ export default function TheTable() {
             label="Memo"
             type="text"
             fullWidth
+            value={input.content}
+            onChange={event => setInput({...input, content:event.target.value})}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={addTable} color="primary">
             OK
           </Button>
         </DialogActions>
