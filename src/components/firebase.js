@@ -5,15 +5,17 @@ import firebase from 'firebase';
 
 let database;
 let config = {
-    
+  
 };
 
+let firebaseApp;
 if (!firebase.apps.length) {
   console.log('Initialize...!!!')
-  firebase.initializeApp(config);
+  firebaseApp = firebase.initializeApp(config);
 }
 
-database = firebase.database()
+// database = firebase.database()
+const db = firebaseApp.firestore()
 
 // export const fire = () => {
 
@@ -39,4 +41,4 @@ database = firebase.database()
 //   console.error(error);
 // });
 
-export default firebase;
+export default db;
