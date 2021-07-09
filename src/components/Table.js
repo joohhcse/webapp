@@ -90,6 +90,7 @@ export default function TheTable() {
   };
   
   const handleClose = () => {
+    setInput('');
     setOpen(false);
   };
 
@@ -130,6 +131,10 @@ export default function TheTable() {
   }
 
   const deleteTable = (id) => {
+    if(!window.confirm("삭제할까요?")) {
+      return;
+    }
+
     db.collection('table').doc(id).delete().then(res => {
       console.log('Deleted!', res);
     });
